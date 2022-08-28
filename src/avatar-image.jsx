@@ -127,12 +127,17 @@ const AvatarImage = createReactClass({
      */
     getInitials: function( name )
     {
+        console.log(name);
         var parts = name.split(' ');
-        var initials = '';
-        for(var i=0 ; i < parts.length ; i++)
-        {
-            initials += parts[i].substr(0, 1).toUpperCase();
+        var initials = parts[0].substring(0, 1).toUpperCase();
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1].substring(0, 1).toUpperCase();
         }
+        
+        // for(var i=0 ; i < parts.length ; i++)
+        // {
+        //     initials += parts[i].substr(0, 1).toUpperCase();
+        // }
         return initials;
     },
 
@@ -212,7 +217,9 @@ const AvatarImage = createReactClass({
     //   this.fetch();
     // },
     componentDidMount: function() {
-        this.fetch();
+        // this.fetch();
+        if( this.props.name )
+            this.trySetState({ value: this.getInitials( this.props.name ) });
     },
     componentWillReceiveProps: function(newProps) {
         /**
@@ -220,13 +227,18 @@ const AvatarImage = createReactClass({
          * `this.props.value`. This lifecycle method will allow users to change the avatars name or
          * value.
          */
-        if (newProps.src && newProps.src !== this.props.src) {
-            this.trySetState({ src: newProps.src });
-        } else if (newProps.name && newProps.name !== this.props.name) {
+         if (newProps.value && newProps.value !== this.props.value) {
             this.trySetState({ value: this.getInitials(newProps.name) });
-        } else if (newProps.value && newProps.value !== this.props.value) {
-            this.trySetState({ value: newProps.value });
-        }
+         }
+
+
+        // if (newProps.src && newProps.src !== this.props.src) {
+        //     this.trySetState({ src: newProps.src });
+        // } else if (newProps.name && newProps.name !== this.props.name) {
+        //     this.trySetState({ value: this.getInitials(newProps.name) });
+        // } else if (newProps.value && newProps.value !== this.props.value) {
+        //     this.trySetState({ value: newProps.value });
+        // }
     },
 
     trySetState: function(hash){
@@ -310,9 +322,16 @@ const AvatarImage = createReactClass({
             color: this.props.fgColor,
             textAlign: 'center',
             textTransform: 'uppercase',
-            lineHeight: (this.props.size + Math.floor(this.props.size/10)) + 'px',
-            borderRadius: (this.props.round ? 500 : 0)
+            borderRadius: (this.props.round ? 500 : 0),
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
         };
+        return (
+            /* jshint ignore:start */
+            <div style={ initialsStyle }>{ this.state.value }</div>
+            /* jshint ignore:end */
+        );
 
         if(this.state.src) {
             return (
